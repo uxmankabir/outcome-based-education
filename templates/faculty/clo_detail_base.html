@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block script %}
+<script>
+    $(document).ready(function () {
+        $('#courses_list a').removeClass('active');
+        $('#course_id_'+location.href.split('/')[5]).addClass('active');
+        $('#navbarNav ul > li').removeClass('active');
+        $('#clos').addClass('active');
+    });
+</script>
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-xs-12 col-md-3 col-lg-2">
+        <h3 class="my-3">Courses</h3>
+
+        <div class="list-group list-group-flush" id="courses_list">
+
+             {% for course in courses %}
+                <a href="{% url 'clo_detail' course.id %}" id="course_id_{{course.id}}" class="list-group-item list-group-item-action">{{course.name}}</a>
+             {% endfor %}
+
+        </div>
+    </div>
+    <div class="col-xs-12 col-md-9 col-lg-10">
+        {% block clodetail %}
+        {% endblock %}
+    </div>
+</div>
+
+{% endblock %}

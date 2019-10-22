@@ -1,0 +1,137 @@
+{% extends "faculty/result_add_base.html" %}
+
+{% block title %}
+    Add New Result
+{% endblock %}
+
+
+{% block script %}
+ <script>
+<!--    $(function () {-->
+<!--        $('#sections_list').change(function(){-->
+<!--           $.ajax({-->
+<!--                type: 'POST',-->
+<!--                url: '/faculty/all_students/',-->
+<!--                dataType: 'json',-->
+<!--                data: {-->
+<!--                'section': $('#sections_list').val(),-->
+<!--                'course_id': location.href.split('/')[5],-->
+<!--                'csrfmiddlewaretoken': '{{ csrf_token }}'-->
+<!--                },-->
+<!--                success: function(data){-->
+<!--                    alert(data)-->
+<!--                }-->
+<!--           });-->
+<!--        });-->
+<!--    });-->
+ </script>
+{% endblock %}
+
+{% block resultdetail %}
+
+<h3 class="my-3">Add Marks</h3>
+
+<div class="row">
+    <div class="col-12">
+
+        <form action="#" method="POST" enctype="multipart/form-data" style="display:inline-flex;">
+            {% csrf_token %}
+
+            <div class="custom-file">
+                <input type="file" class="custom-file-input" name="csvfile" id="csvfile">
+                <label class="custom-file-label" for="csvfile">Choose .csv file</label>
+            </div>
+            <div class="text-center">
+                <input type="submit" value="Upload" class="btn btn-primary btn-sm">
+            </div>
+        </form>
+
+    </div>
+</div>
+
+
+    <h4 class="text-center">OR</h4>
+
+<!-- Card -->
+<div class="card mb-3">
+
+    <!-- Card content -->
+    <div class="card-body">
+        <form action="{% url 'result_add' %}" method="POST">
+            {% csrf_token %}
+
+            <div class="mb-2">
+                <label for="sections_list">Select Section</label>
+
+
+                <select class="custom-select d-inline-block w-25" id="sections_list" onchange="getSelectValue(); ">
+                    {% for section in sections%}
+                        <option value="{{section.section_name}}">{{section.section_name}}</option>
+                    {% endfor %}
+                </select>
+
+            </div>
+
+            <div>
+                <label for="clos_list">Select CLO</label>
+                <select class="custom-select d-inline-block w-25" id="clos_list">
+                    {% for clo in clos %}
+                        <option value="{{clo.id}}">{{clo.clo_code}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+
+            <div class="md-form">
+                <input type="text" name="assessment_tool" id="assessment_tool" class="form-control">
+                <label for="assessment_tool">Assessment Tool</label>
+            </div>
+            <div class="md-form">
+                <input type="text" name="assessment_no" id="assessment_no" class="form-control">
+                <label for="assessment_no">Assessment No</label>
+            </div>
+            <div class="md-form">
+                <input type="text" name="question_no" id="question_no" class="form-control">
+                <label for="question_no">Question No</label>
+            </div>
+            <div class="md-form">
+                <input type="text" name="total_marks" id="total_marks" class="form-control">
+                <label for="total_marks">Total Marks</label>
+            </div>
+            <div class="table-responsive text-nowrap">
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th scope="col">Roll No</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Obtained Marks</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for student in students %}
+                        <tr>
+                            <th scope="row">{{student}}</th>
+                            <td>{{student}}</td>
+<!--                            <td class="py-0">-->
+<!--                                <div class="md-form my-0">-->
+<!--                                    <input name="student" value="{{value.roll_no}}" hidden class="form-control">-->
+<!--                                    <input name="marks_{{value.roll_no}}" type="text" class="form-control">-->
+<!--                                </div>-->
+<!--                            </td>-->
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="float-right">
+                <input type="submit" value="Add Marks" class="btn btn-primary btn-md">
+            </div>
+        </form>
+
+    </div>
+
+</div>
+<!-- Card -->
+
+{% endblock %}

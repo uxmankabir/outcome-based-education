@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block script %}
+<script>
+    $(document).ready(function () {
+        $('#programs_list a').removeClass('active');
+        $('#plo_id_'+location.href.split('/')[5]).addClass('active');
+        $('#navbarNav ul > li').removeClass('active');
+        $('#slos').addClass('active');
+    });
+</script>
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-xs-12 col-md-3 col-lg-2">
+        <h3 class="my-3">Programs</h3>
+        <div class="list-group list-group-flush" id="programs_list">
+            {% for program in program_names %}
+                <a href="{% url 'slo_detail' program.id %}" id="plo_id_{{program.id}}" class="list-group-item list-group-item-action active">{{program.name}}</a>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="col-xs-12 col-md-9 col-lg-10">
+        {% block slodetail %}
+
+        {% endblock %}
+    </div>
+</div>
+
+{% endblock %}

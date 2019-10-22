@@ -1,0 +1,56 @@
+{% extends "faculty/clo_detail_base.html" %}
+
+{% block title %}
+    CLO
+{% endblock %}
+
+{% block clodetail %}
+
+<h3 class="my-3 d-inline-block">Course Learning Outcomes</h3>
+
+<a class="btn btn-primary btn-sm d-inline-block" href="{% url 'clo_add' %}">Add New CLO</a>
+
+<!-- Card -->
+<div class="card mb-3">
+
+    <!-- Card content -->
+    <div class="card-body">
+
+        <div class="table-responsive text-nowrap">
+
+            <table class="table">
+                <thead class="primary-color white-text">
+                    <tr>
+                        <th scope="col">CLO Code</th>
+                        <th scope="col">Assigned Course Learning Outcome (CLO)</th>
+                        <th scope="col">SLO</th>
+                        <th scope="col">Update/Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                        {% for clo in clos %}
+                        <tr>
+                            <td scope="row">
+                                {{ clo.clo_code }}
+                            </td>
+                            <td>{{ clo.description }}</td>
+                            <td>{{ clo.slo.slo_code }}</td>
+                            <td class="py-2">
+                                <a href="#" class="btn btn-sm btn-primary"><i class="far fa-edit"></i></a>
+                                <a href="#" class="btn btn-sm btn-danger"><i class="far fa-trash-alt"></i></a>
+                            </td>
+
+                        </tr>
+                        {% endfor %}
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+<!-- Card -->
+
+{% endblock %}

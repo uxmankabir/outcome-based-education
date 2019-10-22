@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+<!--This is comment-->
+
+{% block script %}
+<script>
+    $(document).ready(function () {
+        $('#courses_list a').first().addClass("active");
+
+        $('#courses_list > a').click(function (e) {
+            e.preventDefault();
+            $('#courses_list > a').removeClass('active');
+            $(this).addClass('active');
+        });
+        $('#navbarNav ul > li').removeClass('active');
+        $('#result').addClass('active');
+    });
+</script>
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-xs-12 col-md-3 col-lg-2">
+
+        <h3 class="my-3">Courses</h3>
+
+        <div class="list-group list-group-flush" id="courses_list">
+            {% for course in courses %}
+            <a href="#" class="list-group-item list-group-item-action">{{course}}</a>
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+    <div class="col-xs-12 col-md-9 col-lg-10">
+        {% block resultdetail %}
+        {% endblock %}
+
+    </div>
+</div>
+
+{% endblock %}

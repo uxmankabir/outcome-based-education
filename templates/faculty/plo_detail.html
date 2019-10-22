@@ -1,0 +1,54 @@
+{% extends "faculty/plo_detail_base.html" %}
+
+{% block title %}
+    PLO
+{% endblock %}
+
+{% block plodetail %}
+
+<h3 class="my-3 d-inline-block">Program Learning Outcomes</h3>
+
+<a class="btn btn-primary btn-sm d-inline-block" href="{% url 'plo_add' %}">Add New PLO</a>
+
+<!-- Card -->
+<div class="card mb-3">
+
+    <!-- Card content -->
+    <div class="card-body">
+        <div class="table-responsive text-nowrap">
+
+            <table class="table">
+                <thead class="primary-color white-text">
+                    <tr>
+                        <th scope="col">PLO Code</th>
+                        <th scope="col">Assigned Program Learning Outcome (PLO)</th>
+                        <th scope="col">Batch</th>
+                        <th scope="col">Update/Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    {% for item in plos %}
+                    <tr>
+                        <td scope="row">
+                            {{ item.plo_code }}
+                        </td>
+                        <td>{{ item.description }}</td>
+                        <td>{{ item.batch }}</td>
+
+                        <td class="py-2">
+                            <a href="#" class="btn btn-sm btn-primary"><i class="far fa-edit"></i></a>
+                            <a href="#" class="btn btn-sm btn-danger"><i class="far fa-trash-alt"></i></a>
+                        </td>
+
+                    </tr>
+                    {% endfor %}
+            </table>
+
+        </div>
+    </div>
+</div>
+
+<!-- Card -->
+
+{% endblock %}

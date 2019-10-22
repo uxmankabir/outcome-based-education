@@ -1,0 +1,87 @@
+{% extends "faculty/clo_add_base.html" %}
+
+{% block title %}
+    Add New CLO
+{% endblock %}
+
+
+{% block script %}
+<script>
+$('#typeOfGlass').on('change', function(){
+    $('#clo_list').html('');
+    if($('#plo_list').val()==15){
+        $('#clo_list').append('<option value="19">19</option>');
+        $('#clo_list').append('<option value="20">20</option>');
+        $('#clo_list').append('<option value="21">21</option>');
+    }else{
+        $('#clo_list').append('<option value="6">6</option>');
+        $('#clo_list').append('<option value="7">7</option>');
+        $('#clo_list').append('<option value="8">8</option>');
+        $('#clo_list').append('<option value="9">9</option>');
+    }
+});
+
+</script>
+{% endblock %}
+
+
+
+{% block clodetail %}
+
+<h3 class="my-3">Add New CLO</h3>
+
+<!-- Card -->
+<div class="card mb-3">
+
+    <!-- Card content -->
+    <div class="card-body">
+        <form action="#" method="POST">
+            {% csrf_token %}
+            <div class="md-form">
+                <input type="number" id="clocode" name= "clocode" class="form-control">
+                <label for="clocode">CLO Code</label>
+            </div>
+            <div class="md-form">
+                <input type="text" id="clostatement" name= "clostatement" class="form-control">
+                <label for="clostatement">CLO Statement</label>
+            </div>
+
+             <div class="md-form row">
+                <div class="col-sm-12 col-md-3 col-lg-2">
+                    <label for="plo_list">Select PLO</label>
+                </div>
+
+                <div class="col-sm-12 col-md-3 col-lg-2">
+                    <select class="custom-select" id="plo_list" name="plo_list">
+                        {% for item in clos %}
+                        <option value='{{item.id}}'>{{item.plo_code}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="md-form row">
+                <div class="col-sm-12 col-md-3 col-lg-2">
+                    <label for="clo_list">Select SLO</label>
+                </div>
+
+                <div class="col-sm-12 col-md-3 col-lg-2">
+                    <select class="custom-select" id="clo_list" name="clo_list">
+                        {% for item in clos %}
+                        <option value='{{item.id}}'>{{item.clo_code}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+            </div>
+            <div class="float-right">
+                <input type="submit" value="Add CLO" class="btn btn-primary btn-md">
+            </div>
+        </form>
+    </div>
+
+</div>
+<!-- Card -->
+
+{% endblock %}

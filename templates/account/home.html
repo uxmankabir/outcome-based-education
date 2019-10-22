@@ -1,0 +1,80 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="shortcut icon" type="image/png" href="{% static 'images/master.png' %}" />
+    <title>Login</title>
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css">
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" type="text/css" href="{% static 'mdbootstrap/css/bootstrap.min.css' %}">
+    <!-- Material Design Bootstrap -->
+    <link rel="stylesheet" type="text/css" href="{% static 'mdbootstrap/css/mdb.min.css' %}">
+
+    <style>
+        body {
+            height: 100vh;
+            background-image: linear-gradient(to right top, #051937, #143c66, #1e6498, #1c90cb, #00bfff);
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div class="container-fluid">
+
+        <div class="row">
+            <div class="col-xm-12 col-md-8 col-lg-5 m-auto">
+                <p class="my-5 text-center text-white h1">Outcome Based Education</p>
+                <div class="card">
+                    <div class="card-body">
+                        <form action="{% url 'user_login' %}" method="POST">
+                            {% csrf_token %}
+                            <div class="md-form">
+                                <i class="fas fa-user text-primary prefix"></i>
+                                <input type="text" id="username" name="username" class="form-control" required>
+                                <label for="username">Username</label>
+                            </div>
+                            <div class="md-form">
+                                <i class="fas fa-key text-primary prefix"></i>
+                                <input type="password" name="password" id="password" class="form-control" required>
+                                <label for="password">Password</label>
+                            </div>
+                            {% if error_message %}
+                            <div class="alert alert-danger" role="alert">
+                                {{error_message}}
+                            </div>
+                            {% endif %}
+                            <div class="text-center">
+                                <input type="submit" value="Login" class="btn btn-primary">
+                            </div>
+                        </form>
+                        <div class="float-right">
+                            <a href="#"> <i class="fas text-primary fa-question-circle"></i> Forget Password?</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+</body>
+
+
+<script type="text/javascript" src="{% static 'mdbootstrap/js/jquery-3.4.0.min.js' %}"></script>
+<!-- Bootstrap tooltips -->
+<script type="text/javascript" src="{% static 'mdbootstrap/js/popper.min.js' %}"></script>
+<!-- Bootstrap core JavaScript -->
+<script type="text/javascript" src="{% static 'mdbootstrap/js/bootstrap.min.js' %}"></script>
+<!-- MDB core JavaScript -->
+<script type="text/javascript" src="{% static 'mdbootstrap/js/mdb.js' %}"></script>
+
+</html>

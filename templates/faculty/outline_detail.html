@@ -1,0 +1,101 @@
+{% extends "faculty/outline_detail_base.html" %}
+
+{% block title %}
+    Outline
+{% endblock %}
+
+
+{% block outlinedetail %}
+<h3 class="my-3 d-inline-block">Course Outlines</h3>
+
+<a class="btn btn-primary btn-sm d-inline-block" href="{% url 'outline_add' %}">Add New Outline</a>
+
+<!-- Card -->
+<div class="card mb-3">
+
+    <!-- Card content -->
+    <div class="card-body">
+
+        <div class="table-responsive text-nowrap">
+
+            <table class="table">
+                <thead class="primary-color white-text">
+                    <tr>
+                        <th scope="col">Week</th>
+                        <th scope="col">Course Contents/Topics</th>
+                        <th scope="col">Chapters*</th>
+                        <th scope="col">CLO</th>
+                        <th scope="col">Update/Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th scope="row">1</th>
+                        <td>
+                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Beatae laborum ratione
+                        </td>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                        <td class="py-2">
+                            <a class="btn btn-sm btn-primary"><i class="far fa-edit"></i></a>
+                            <a class="btn btn-sm btn-danger"><i class="far fa-trash-alt"></i></a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">2</th>
+                        <td>
+                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Beatae laborum ratione
+                        </td>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                        <td class="py-2">
+                            <a class="btn btn-sm btn-primary"><i class="far fa-edit"></i></a>
+                            <a class="btn btn-sm btn-danger"><i class="far fa-trash-alt"></i></a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">3</th>
+                        <td>
+                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Beatae laborum ratione
+                        </td>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                        <td class="py-2">
+                            <a class="btn btn-sm btn-primary"><i class="far fa-edit"></i></a>
+                            <a class="btn btn-sm btn-danger"><i class="far fa-trash-alt"></i></a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">4</th>
+                        <td>
+                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Beatae laborum ratione
+                        </td>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                        <td class="py-2">
+                            <a class="btn btn-sm btn-primary"><i class="far fa-edit"></i></a>
+                            <a class="btn btn-sm btn-danger"><i class="far fa-trash-alt"></i></a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">5</th>
+                        <td>
+                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Beatae laborum ratione
+                        </td>
+                        <td>Cell</td>
+                        <td>Cell</td>
+                        <td class="py-2">
+                            <a class="btn btn-sm btn-primary"><i class="far fa-edit"></i></a>
+                            <a class="btn btn-sm btn-danger"><i class="far fa-trash-alt"></i></a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+</div>
+<!-- Card -->
+
+{% endblock %}

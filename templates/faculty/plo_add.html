@@ -1,0 +1,52 @@
+{% extends "faculty/plo_add_base.html" %}
+
+{% block title %}
+    Add New PLO
+{% endblock %}
+
+
+{% block script %}
+<script>
+    $(function () {
+        $('#programs_list a').removeClass('active');
+        $('#plo_id_'+location.href.split('/')[5]).addClass('active');
+        $('#program_id').val(location.href.split('/')[5]);
+        $('#navbarNav ul > li').removeClass('active');
+        $('#plos').addClass('active');
+    });
+</script>
+{% endblock %}
+
+{% block plodetail %}
+
+<h3 class="my-3">Add New PLO</h3>
+
+<!-- Card -->
+<div class="card mb-3">
+
+    <!-- Card content -->
+    <div class="card-body">
+        <form action="{% url 'plo_add' %}" method="POST">
+            {% csrf_token %}
+            <input type="number" hidden id="program_id" name="program_id">
+            <div class="md-form">
+                <input type="text" id="plo_code" name="plo_code" class="form-control">
+                <label for="plo_code">PLO Code</label>
+            </div>
+            <div class="md-form">
+                <input type="text" id="plo_description" name="plo_description" class="form-control">
+                <label for="plo_description">PLO Statement</label>
+            </div>
+            <div class="md-form">
+                <input type="text" id="plo_batch" name="plo_batch" class="form-control">
+                <label for="plo_batch">Batch</label>
+            </div>
+            <div class="float-right">
+                <input type="submit" value="Add PLO" class="btn btn-primary btn-md">
+            </div>
+        </form>
+    </div>
+
+</div>
+<!-- Card -->
+{% endblock %}

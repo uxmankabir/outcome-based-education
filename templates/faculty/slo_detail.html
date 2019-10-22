@@ -1,0 +1,58 @@
+{% extends "faculty/slo_detail_base.html" %}
+
+{% block title %}
+    SLO
+{% endblock %}
+
+
+{% block slodetail %}
+
+
+<h3 class="my-3 d-inline-block">Student Learning Outcomes</h3>
+
+<a class="btn btn-primary btn-sm d-inline-block" href="{% url 'slo_add' %}">Add New SLO</a>
+
+<!-- Card -->
+<div class="card mb-3">
+
+    <!-- Card content -->
+    <div class="card-body">
+        <div class="table-responsive text-nowrap">
+
+            <table class="table">
+                <thead class="primary-color white-text">
+                    <tr>
+                        <th scope="col">SLO Code</th>
+                        <th scope="col">Assigned Student Learning Outcome (SLO)</th>
+                        <th scope="col">Assigned PLO </th>
+                        <th scope="col">Batch </th>
+                        <th scope="col">Update/Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for plo in slos %}
+
+                        {% for item in plo %}
+                        <tr>
+                            <td scope="row">
+                                {{ item.slo_code }}
+                            </td>
+                            <td>{{ item.description }}</td>
+                            <td>{{ item.plo.plo_code }}</td>
+                            <td>{{ item.plo.batch }}</td>
+                            <td class="py-2">
+                                <a href="#" class="btn btn-sm btn-primary"><i class="far fa-edit"></i></a>
+                                <a href="#" class="btn btn-sm btn-danger"><i class="far fa-trash-alt"></i></a>
+                            </td>
+
+                        </tr>
+                        {% endfor %}
+                    {% endfor %}
+            </table>
+
+        </div>
+    </div>
+
+</div>
+<!-- Card -->
+{% endblock %}
