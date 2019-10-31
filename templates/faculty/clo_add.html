@@ -6,22 +6,35 @@
 
 
 {% block script %}
-<script>
-$('#typeOfGlass').on('change', function(){
-    $('#clo_list').html('');
-    if($('#plo_list').val()==15){
-        $('#clo_list').append('<option value="19">19</option>');
-        $('#clo_list').append('<option value="20">20</option>');
-        $('#clo_list').append('<option value="21">21</option>');
-    }else{
-        $('#clo_list').append('<option value="6">6</option>');
-        $('#clo_list').append('<option value="7">7</option>');
-        $('#clo_list').append('<option value="8">8</option>');
-        $('#clo_list').append('<option value="9">9</option>');
-    }
-});
+ <script>
+    $(function () {
+        $('#courses_list input').removeClass('active');
+        $('#course_id_'+location.href.split('/')[5]).addClass('active');
+        $('#navbarNav ul > li').removeClass('active');
+        $('#clos').addClass('active');
 
-</script>
+        $('#course_id').val(location.href.split('/')[5]);
+        $('#plo_list').change(function(){
+           $.ajax({
+                type: 'POST',
+                url: '/faculty/all_slos/',
+                dataType: 'json',
+                data: {
+                'plo_id': $('#plo_list').val(),
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                success: function(data){
+                    let html = '';
+                    for(i=0; i<Object.keys(data).length; i++){
+                        html += "<option value='" + data[i].id +"'>"+data[i].slo_code+ "</option>";
+                    }
+                    $("#slo_list").html(html);
+                }
+           });
+        });
+    });
+
+ </script>
 {% endblock %}
 
 
@@ -35,15 +48,16 @@ $('#typeOfGlass').on('change', function(){
 
     <!-- Card content -->
     <div class="card-body">
-        <form action="#" method="POST">
+        <form action="{% url 'clo_add' %}" method="POST">
             {% csrf_token %}
+            <input type="text" hidden name="course_id" id="course_id">
             <div class="md-form">
-                <input type="number" id="clocode" name= "clocode" class="form-control">
-                <label for="clocode">CLO Code</label>
+                <input type="text" id="clo_code" name= "clo_code" required maxlength="10" class="form-control">
+                <label for="clo_code">CLO Code</label>
             </div>
             <div class="md-form">
-                <input type="text" id="clostatement" name= "clostatement" class="form-control">
-                <label for="clostatement">CLO Statement</label>
+                <input type="text" id="clo_statement" name= "clo_statement" maxlength="1500" required class="form-control">
+                <label for="clo_statement">CLO Statement</label>
             </div>
 
              <div class="md-form row">
@@ -52,9 +66,9 @@ $('#typeOfGlass').on('change', function(){
                 </div>
 
                 <div class="col-sm-12 col-md-3 col-lg-2">
-                    <select class="custom-select" id="plo_list" name="plo_list">
-                        {% for item in clos %}
-                        <option value='{{item.id}}'>{{item.plo_code}}</option>
+                    <select class="custom-select" id="plo_list" required name="plo_list">
+                        {% for plo in plos %}
+                        <option value='{{plo.id}}'>{{plo.plo_code}} {{plo.description}} </option>
                         {% endfor %}
                     </select>
                 </div>
@@ -63,14 +77,12 @@ $('#typeOfGlass').on('change', function(){
 
             <div class="md-form row">
                 <div class="col-sm-12 col-md-3 col-lg-2">
-                    <label for="clo_list">Select SLO</label>
+                    <label for="slo_list">Select SLO</label>
                 </div>
 
                 <div class="col-sm-12 col-md-3 col-lg-2">
-                    <select class="custom-select" id="clo_list" name="clo_list">
-                        {% for item in clos %}
-                        <option value='{{item.id}}'>{{item.clo_code}}</option>
-                        {% endfor %}
+                    <select class="custom-select" id="slo_list" name="slo_list" required>
+
                     </select>
                 </div>
 

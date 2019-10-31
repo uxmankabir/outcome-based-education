@@ -1,10 +1,10 @@
-from django.core.serializers import json
-from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
-from django.shortcuts import render
+from django.http import HttpResponseRedirect, JsonResponse
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from django.forms.models import model_to_dict
-
-
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from .serializers import StudentSerializer, SloSerializer, PloSerializer
+import datetime
 
 # Create your views here.
 from django.urls import reverse
@@ -24,19 +24,38 @@ def result_detail(request):
 @login_required(login_url='home')
 def result_add(request):
     user = request.user
-    current_semester = 'Fall2018'
 
-    courses_id = Course.objects.filter(section__instructor_id=user.id).values('id').distinct()
-    courses = []
-    i = 0
-    for course_id in courses_id:
-        course = Course.objects.filter(id=course_id['id']).values('id', 'name')
-        courses.append(course[0])
-        i = i + 1
+    if request.method == 'POST':
+        course = Course.objects.get(pk=request.POST['course_id'])
+        clo = Clo.objects.get(pk=request.POST['clos_list'])
+        assessment_tool = AssessmentTool.objects.get(pk=request.POST['assessment_tool'])
 
+        assessment_no = request.POST['assessment_no']
+        question_no = request.POST['question_no']
+        total_marks = request.POST['total_marks']
+
+        students = request.POST.getlist('student')
+        marks = [request.POST['marks_{}'.format(std)] for std in students]
+
+        i = 0
+        for student in students:
+            assessment = Assessment()
+            assessment.assessment_count = assessment_no
+            assessment.question_no = question_no
+            assessment.obtained_marks = marks[i]
+            assessment.total_marks = total_marks
+            assessment.assessment_tool = assessment_tool
+            assessment.clo = clo
+            assessment.course = course
+            assessment.student = User.objects.get(username=student)
+            i = i + 1
+            assessment.save()
+
+    courses = Course.objects.filter(section__instructor_id=user.id).distinct()
+    assessment_tools = AssessmentTool.objects.all()
     context = {
-        'courses': courses
-        # 'clos': clos
+        'courses': courses,
+        'assessment_tools': assessment_tools
     }
 
     return render(request, 'faculty/result_add.html', context)
@@ -45,24 +64,16 @@ def result_add(request):
 @login_required(login_url='home')
 def result_load(request, course_id):
     user = request.user
-    current_semester = 'Fall2018'
-
-    courses_id = Course.objects.filter(section__instructor_id=user.id).values('id').distinct()
-    courses = []
-    i = 0
-    for c_id in courses_id:
-        course = Course.objects.filter(id=c_id['id']).values('id', 'name')
-        courses.append(course[0])
-        i = i + 1
-
+    courses = Course.objects.filter(section__instructor_id=user.id).distinct()
     sections = Section.objects.filter(instructor_id=user.id, course_id=course_id)
-
     clos = Clo.objects.filter(course_id=course_id)
+    assessment_tools = AssessmentTool.objects.all()
 
     context = {
         'courses': courses,
         'sections': sections,
-        'clos': clos
+        'clos': clos,
+        'assessment_tools': assessment_tools
     }
 
     return render(request, 'faculty/result_add.html', context)
@@ -71,32 +82,13 @@ def result_load(request, course_id):
 @login_required(login_url='home')
 def clo_detail(request):
     user = request.user
-    current_semester = 'Fall2018'
-
-    courses_id = Course.objects.filter(section__instructor_id=user.id).values('id').distinct()
-    courses = []
-    print(courses_id)
-    i = 0
-    for course_id in courses_id:
-        course = Course.objects.filter(id=course_id['id']).values('id', 'name')
-        courses.append(course[0])
-        i = i + 1
-
+    courses = Course.objects.filter(section__instructor_id=user.id).distinct()
     return HttpResponseRedirect(reverse('clo_detail', args=(courses[0]['id'],)))
 
 
 def clo_detail(request, course_id=0):
     user = request.user
-    current_semester = 'Fall2018'
-
-    courses_id = Course.objects.filter(section__instructor_id=user.id).values('id').distinct()
-    courses = []
-    i = 0
-    for c_id in courses_id:
-        course = Course.objects.filter(id=c_id['id']).values('id', 'name')
-        courses.append(course[0])
-        i = i + 1
-
+    courses = Course.objects.filter(section__instructor_id=user.id).distinct()
     clos = Clo.objects.filter(course_id=course_id)
     context = {
         'courses': courses,
@@ -105,36 +97,36 @@ def clo_detail(request, course_id=0):
     return render(request, 'faculty/clo_detail.html', context)
 
 
+def clo_delete(request, clo_id):
+    instance = Clo.objects.get(id=clo_id)
+    instance.delete()
+    return redirect(clo_detail)
+
+
 @login_required(login_url='home')
 def clo_add(request):
     user = request.user
-    current_semester = 'Fall2018'
-
-    courses_id = Course.objects.filter(section__instructor_id=user.id).values('id').distinct()
-    courses = []
-    print(courses_id)
-    i = 0
-    for course_id in courses_id:
-        course = Course.objects.filter(id=course_id['id']).values('id', 'name')
-        courses.append(course[0])
-        i = i + 1
-
+    courses = Course.objects.filter(section__instructor_id=user.id).distinct()
     return HttpResponseRedirect(reverse('faculty/clo_add.html', args=(courses[0]['id'],)))
 
 
 @login_required(login_url='home')
 def clo_add(request, course_id=0):
     user = request.user
-    current_semester = 'Fall2018'
+    if request.method == 'POST':
+        course_id = Course.objects.get(pk=request.POST['course_id'])
+        clo_code = request.POST['clo_code']
+        clo_statement = request.POST['clo_statement']
+        slo_id = Slo.objects.get(pk=request.POST['slo_list'])
+        clo = Clo()
+        clo.course = course_id
+        clo.description = clo_statement
+        clo.clo_code = clo_code
+        clo.slo = slo_id
 
-    courses_id = Course.objects.filter(section__instructor_id=user.id).values('id').distinct()
-    courses = []
-    i = 0
-    for c_id in courses_id:
-        course = Course.objects.filter(id=c_id['id']).values('id', 'name')
-        courses.append(course[0])
-        i = i + 1
+        clo.save()
 
+    courses = Course.objects.filter(section__instructor_id=user.id).distinct()
     clos = Clo.objects.filter(course_id=course_id)
     context = {
         'courses': courses,
@@ -145,19 +137,12 @@ def clo_add(request, course_id=0):
 
 def clo_load(request, course_id=0):
     user = request.user
-    current_semester = 'Fall2018'
-
-    courses_id = Course.objects.filter(section__instructor_id=user.id).values('id').distinct()
-    courses = []
-    i = 0
-    for c_id in courses_id:
-        course = Course.objects.filter(id=c_id['id']).values('id', 'name')
-        courses.append(course[0])
-        i = i + 1
+    courses = Course.objects.filter(section__instructor_id=user.id).distinct()
+    plos = Plo.objects.filter(program__student__section__course_id=course_id).distinct()
 
     context = {
         'courses': courses,
-        # 'clos': clos
+        'plos': plos
     }
     return render(request, 'faculty/clo_add.html', context)
 
@@ -165,41 +150,18 @@ def clo_load(request, course_id=0):
 @login_required(login_url='home')
 def slo_detail(request):
     user = request.user
-    current_semester = 'Fall2018'
+    programs = Program.objects.filter(student__section__instructor_id=user.id).distinct()
 
-    programs_id = Student.objects.filter(section__instructor_id=user.id).values('program_id').distinct()
-    program_name = []
-    i = 0
-    for p in programs_id:
-        programs = Program.objects.filter(id=programs_id[i]['program_id']).values('id', 'name')
-        program_name.append(programs[0])
-        i = i + 1
-
-    return HttpResponseRedirect(reverse('slo_detail', args=(program_name[0]['id'],)))
+    return HttpResponseRedirect(reverse('slo_detail', args=(programs[0]['id'],)))
 
 
 def slo_detail(request, program_id=0):
     user = request.user
-    # current_semester = 'Fall2018'
-    programs_id = Student.objects.filter(section__instructor_id=user.id).values('program_id').distinct()
-    program_name = []
-    i = 0
-    for p in programs_id:
-        programs = Program.objects.filter(id=programs_id[i]['program_id']).values('id', 'name')
-        program_name.append(programs[0])
-        i = i + 1
-
-    plos = Plo.objects.filter(program_id=program_id)
-
-    slos = []
-
-    for plo in plos:
-        slos.append(Slo.objects.filter(plo_id=plo.id))
-
+    programs = Program.objects.filter(student__section__instructor_id=user.id).distinct()
+    slos = Slo.objects.filter(plo__program_id=program_id)
     context = {
-        'program_names': program_name,
+        'programs': programs,
         'slos': slos,
-        'plos': plos,
     }
     return render(request, 'faculty/slo_detail.html', context)
 
@@ -207,39 +169,26 @@ def slo_detail(request, program_id=0):
 @login_required(login_url='home')
 def plo_add(request):
     user = request.user
-    current_semester = 'Fall2018'
-
-    programs_id = Student.objects.filter(section__instructor_id=user.id).values('program_id').distinct()
-    program_name = []
-    i = 0
-    for p in programs_id:
-        programs = Program.objects.filter(id=programs_id[i]['program_id']).values('id', 'name')
-        program_name.append(programs[0])
-        i = i + 1
-    return HttpResponseRedirect(reverse('plo_add', args=(program_name[0]['id'],)))
+    programs = Program.objects.filter(student__section__instructor_id=user.id).distinct()
+    now = datetime.datetime.now()
+    return HttpResponseRedirect(reverse('plo_add', args=(programs[0]['id'],)))
 
 
 def plo_add(request, program_id=0):
+    now = datetime.datetime.now()
     if request.method == 'POST':
         plo = Plo()
         program = Program.objects.get(pk=request.POST['program_id'])
         plo.program = program
         plo.plo_code = request.POST['plo_code']
         plo.description = request.POST['plo_description']
-        plo.batch = request.POST['plo_batch']
+        plo.batch = now.year
         plo.save()
-
     user = request.user
-    # current_semester = 'Fall2018'
-    programs_id = Student.objects.filter(section__instructor_id=user.id).values('program_id').distinct()
-    program_name = []
-    i = 0
-    for p in programs_id:
-        programs = Program.objects.filter(id=programs_id[i]['program_id']).values('id', 'name')
-        program_name.append(programs[0])
-        i = i + 1
+    programs = Program.objects.filter(student__section__instructor_id=user.id).distinct()
     context = {
-        'program_names': program_name,
+        'programs': programs,
+        'year': now.year
     }
     return render(request, 'faculty/plo_add.html', context)
 
@@ -247,37 +196,30 @@ def plo_add(request, program_id=0):
 @login_required(login_url='home')
 def plo_detail(request):
     user = request.user
-    current_semester = 'Fall2018'
-
-    programs_id = Student.objects.filter(section__instructor_id=user.id).values('program_id').distinct()
-    program_name = []
-    i = 0
-    for p in programs_id:
-        programs = Program.objects.filter(id=programs_id[i]['program_id']).values('id', 'name')
-        program_name.append(programs[0])
-        i = i + 1
-    return HttpResponseRedirect(reverse('plo_detail', args=(program_name[0]['id'],)))
+    programs = Program.objects.filter(student__section__instructor_id=user.id).distinct()
+    return HttpResponseRedirect(reverse('plo_detail', args=(programs[0]['name'],)))
 
 
 def plo_detail(request, program_id=0):
     user = request.user
-    # current_semester = 'Fall2018'
     # plo_id = request.path.split('/')[3]
-    programs_id = Student.objects.filter(section__instructor_id=user.id).values('program_id').distinct()
-    program_name = []
-    i = 0
-    for p in programs_id:
-        programs = Program.objects.filter(id=programs_id[i]['program_id']).values('id', 'name')
-        program_name.append(programs[0])
-        i = i + 1
 
+    role = Role.objects.filter(users=user.id).first()
 
+    programs = Program.objects.filter(student__section__instructor_id=user.id).distinct()
     plos = Plo.objects.filter(program_id=program_id)
     context = {
-        'program_names': program_name,
+        'programs': programs,
         'plos': plos,
+        'role': role.title
     }
     return render(request, 'faculty/plo_detail.html', context)
+
+
+def plo_delete(request, plo_id):
+    instance = Plo.objects.get(id=plo_id)
+    instance.delete()
+    return redirect(plo_detail)
 
 
 @login_required(login_url='home')
@@ -289,36 +231,17 @@ def outline_detail(request):
 @login_required(login_url='home')
 def slo_add(request):
     user = request.user
-    current_semester = 'Fall2018'
+    programs = Program.objects.filter(student__section__instructor_id=user.id).distinct()
 
-    programs_id = Student.objects.filter(section__instructor_id=user.id).values('program_id').distinct()
-    program_name = []
-    i = 0
-    for p in programs_id:
-        programs = Program.objects.filter(id=programs_id[i]['program_id']).values('id', 'name')
-        program_name.append(programs[0])
-        i = i + 1
-
-    return HttpResponseRedirect(reverse('slo_add', args=(program_name[0]['id'],)))
+    return HttpResponseRedirect(reverse('slo_add', args=(programs[0]['id'],)))
 
 
 def slo_load(request, program_id):
     user = request.user
-    # current_semester = 'Fall2018'
-    programs_id = Student.objects.filter(section__instructor_id=user.id).values('program_id').distinct()
-    program_name = []
-    i = 0
-    for p in programs_id:
-        programs = Program.objects.filter(id=programs_id[i]['program_id']).values('id', 'name')
-        program_name.append(programs[0])
-        i = i + 1
-
+    programs = Program.objects.filter(student__section__instructor_id=user.id).distinct()
     plos = Plo.objects.filter(program_id=program_id)
-
-    #print(plos)
-
     context = {
-        'program_names': program_name,
+        'programs': programs,
         'plos': plos,
     }
     return render(request, 'faculty/slo_add.html', context)
@@ -326,63 +249,27 @@ def slo_load(request, program_id):
 
 @login_required(login_url='home')
 def slo_add(request, program_id=0):
-
     if request.method == 'POST':
         slo = Slo()
         slo.slo_code = request.POST['slo_code']
         slo.description = request.POST['slo_description']
         slo.plo = Plo.objects.get(pk=request.POST['plo_list'])
-
         slo.save()
 
-
     user = request.user
-    # current_semester = 'Fall2018'
-    programs_id = Student.objects.filter(section__instructor_id=user.id).values('program_id').distinct()
-    program_name = []
-    i = 0
-    for p in programs_id:
-        programs = Program.objects.filter(id=programs_id[i]['program_id']).values('id', 'name')
-        program_name.append(programs[0])
-        i = i + 1
-
+    programs = Program.objects.filter(student__section__instructor_id=user.id).distinct()
     plos = Plo.objects.filter(program_id=program_id)
-
     context = {
-        'program_names': program_name,
+        'programs': programs,
         'plos': plos,
     }
     return render(request, 'faculty/slo_add.html', context)
 
-#
-# def slo_add(request, program_id=0):
-#     if request.method == 'POST':
-#         plo = Plo()
-#         program = Program.objects.get(pk=request.POST['program_id'])
-#         plo.program = program
-#         plo.plo_code = request.POST['plo_code']
-#         plo.description = request.POST['plo_description']
-#         plo.batch = request.POST['plo_batch']
-#         plo.save()
-#
-#
-#
-#         user = request.user
-#     current_semester = 'Fall2018'
-#
-#     programs_id = Student.objects.filter(section__instructor_id=user.id).values('program_id').distinct()
-#     program_name = []
-#     i = 0
-#     for p in programs_id:
-#         programs = Program.objects.filter(id=programs_id[i]['program_id']).values('id', 'name')
-#         program_name.append(programs[0])
-#         i = i + 1
-#
-#     context = {
-#         "program_names": program_name
-#     }
-#
-#     return render(request, 'faculty/slo_add.html', context)
+
+def slo_delete(request, slo_id):
+    instance = Slo.objects.get(id=slo_id)
+    instance.delete()
+    return redirect(slo_detail)
 
 
 @login_required(login_url='home')
@@ -390,21 +277,44 @@ def outline_add(request):
     return render(request, 'faculty/outline_add.html', {})
 
 
+@api_view(['POST'])
 def all_students(request):
     user = request.user
     section = request.POST['section']
     course = request.POST['course_id']
-    print(section)
-    print(course)
-    students = Student.objects.filter(section__section_name=section, section__instructor_id=user.id, section__course_id=course)
-    print(students)
+    students = Student.objects.filter(section__section_name=section, section__instructor_id=user.id,
+                                      section__course_id=course)
+    serializer = StudentSerializer(students, many=True)
+    return Response(
+        data=serializer.data,
+        status=200
+    )
 
-    context = {
-        'students': students
-    }
 
-    return render(request, 'faculty/result_add.html', context)
-    # return HttpResponse(json.simplejson.dumps(context), mimetype="application/json")
-    # return JsonResponse(context)
+@api_view(['POST'])
+def all_slos(request):
+    plo = Plo.objects.get(pk=request.POST['plo_id'])
+    slos = plo.slo_set.all()
+    # print(slos)
+    serializer = SloSerializer(slos, many=True)
+    return Response(
+        data=serializer.data,
+        status=200
+    )
 
-    # return HttpResponse(json.dumps(context), content_type="application/json")
+
+@api_view(['POST'])
+def validate_plo_code(request):
+    plo_code = request.POST['plo_code']
+    print(plo_code)
+    program_id = Program.objects.get(pk=request.POST['program_id'])
+    print(program_id)
+    is_unique_plo = Plo.objects.filter(plo_code=plo_code, program_id=program_id)
+    print(is_unique_plo)
+
+    serializer = PloSerializer(is_unique_plo, many=True)
+    return Response(
+        data=serializer.data,
+        status=200
+    )
+

@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'my_admin.apps.MyAdminConfig',
     'faculty.apps.FacultyConfig',
     'student.apps.StudentConfig',
+    'rest_framework'
 ]
 
 MIDDLEWARE = [

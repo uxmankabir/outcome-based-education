@@ -7,9 +7,9 @@
 {% block plodetail %}
 
 <h3 class="my-3 d-inline-block">Program Learning Outcomes</h3>
-
+{% ifequal role "hod" %}
 <a class="btn btn-primary btn-sm d-inline-block" href="{% url 'plo_add' %}">Add New PLO</a>
-
+{% endifequal %}
 <!-- Card -->
 <div class="card mb-3">
 
@@ -38,7 +38,7 @@
 
                         <td class="py-2">
                             <a href="#" class="btn btn-sm btn-primary"><i class="far fa-edit"></i></a>
-                            <a href="#" class="btn btn-sm btn-danger"><i class="far fa-trash-alt"></i></a>
+                            <a href="{% url 'plo_delete' item.id %}" class="btn btn-sm btn-danger"><i class="far fa-trash-alt"></i></a>
                         </td>
 
                     </tr>

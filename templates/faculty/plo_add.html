@@ -13,6 +13,23 @@
         $('#program_id').val(location.href.split('/')[5]);
         $('#navbarNav ul > li').removeClass('active');
         $('#plos').addClass('active');
+
+        $('#plo_code').change(function(){
+           $.ajax({
+                type: 'POST',
+                url: '/faculty/validate_plo_code/',
+                dataType: 'json',
+                data: {
+                'plo_code': $('#plo_code').val(),
+                'program_id': location.href.split('/')[5],
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                success: function(data){
+                    console.log(data)
+                }
+           });
+        });
+
     });
 </script>
 {% endblock %}
@@ -30,15 +47,15 @@
             {% csrf_token %}
             <input type="number" hidden id="program_id" name="program_id">
             <div class="md-form">
-                <input type="text" id="plo_code" name="plo_code" class="form-control">
+                <input type="text" id="plo_code" name="plo_code"  maxlength="10"required class="form-control">
                 <label for="plo_code">PLO Code</label>
             </div>
             <div class="md-form">
-                <input type="text" id="plo_description" name="plo_description" class="form-control">
+                <input type="text" id="plo_description" name="plo_description" maxlength="1500" required class="form-control">
                 <label for="plo_description">PLO Statement</label>
             </div>
             <div class="md-form">
-                <input type="text" id="plo_batch" name="plo_batch" class="form-control">
+                <input type="text" id="plo_batch" name="plo_batch" required value="{{year}}" disabled class="form-control">
                 <label for="plo_batch">Batch</label>
             </div>
             <div class="float-right">

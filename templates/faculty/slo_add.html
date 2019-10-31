@@ -29,11 +29,11 @@
             {% csrf_token %}
 <!--            <input type="number"  id="program_id" name="program_id">-->
             <div class="md-form">
-                <input type="text" id="slo_code" name="slo_code" class="form-control">
+                <input type="text" id="slo_code" name="slo_code" maxlength="10" required class="form-control">
                 <label for="slo_code">SLO Code</label>
             </div>
             <div class="md-form">
-                <input type="text" id="slo_description" name="slo_description" class="form-control">
+                <input type="text" id="slo_description" name="slo_description"  maxlength="1500"required class="form-control">
                 <label for="slo_description">SLO Statement</label>
             </div>
             <div class="md-form row">
@@ -42,7 +42,7 @@
                     </div>
     
                     <div class="col-sm-12 col-md-3 col-lg-2">
-                        <select class="custom-select" id="plo_list" name="plo_list">
+                        <select class="custom-select" id="plo_list" name="plo_list" required>
                             {% for item in plos %}
                             <option value='{{item.id}}'>{{item.plo_code}}</option>
                             {% endfor %}

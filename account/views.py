@@ -1,8 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login, logout, hashers
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 
 
@@ -14,7 +13,7 @@ def home(request):
 def user_login(request):
     context = {}
     if request.user.is_authenticated:
-        return HttpResponseRedirect(reverse('plo_detail'))
+        return HttpResponseRedirect(reverse('result_detail'))
 
     if request.method == 'POST':
         username = request.POST['username']
@@ -25,7 +24,7 @@ def user_login(request):
             context["user"] = user
             if request.GET.get('next', None):
                 return HttpResponseRedirect(request.GET['next'])
-            return HttpResponseRedirect(reverse('plo_detail'))
+            return HttpResponseRedirect(reverse('result_detail'))
         else:
             context["error_message"] = "Username or Password is incorrect."
             return render(request, 'account/home.html', context)

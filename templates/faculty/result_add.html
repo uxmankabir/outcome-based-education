@@ -7,23 +7,45 @@
 
 {% block script %}
  <script>
-<!--    $(function () {-->
-<!--        $('#sections_list').change(function(){-->
-<!--           $.ajax({-->
-<!--                type: 'POST',-->
-<!--                url: '/faculty/all_students/',-->
-<!--                dataType: 'json',-->
-<!--                data: {-->
-<!--                'section': $('#sections_list').val(),-->
-<!--                'course_id': location.href.split('/')[5],-->
-<!--                'csrfmiddlewaretoken': '{{ csrf_token }}'-->
-<!--                },-->
-<!--                success: function(data){-->
-<!--                    alert(data)-->
-<!--                }-->
-<!--           });-->
-<!--        });-->
-<!--    });-->
+    $(function () {
+        $('#course_id').val(location.href.split('/')[5]);
+
+        $('#total_marks').change(function(){
+            $(".max_marks").attr({
+                "max" : $('#total_marks').val(),
+            });
+        });
+
+        $('#sections_list').change(function(){
+           $.ajax({
+                type: 'POST',
+                url: '/faculty/all_students/',
+                dataType: 'json',
+                data: {
+                'section': $('#sections_list').val(),
+                'course_id': location.href.split('/')[5],
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                success: function(data){
+                    $("tbody").empty();
+                    for(i=0; i<Object.keys(data).length; i++){
+                        var html ="<tr><th scope='row'> " + data[i].user.username + "</th>"+
+                                "<td> " + data[i].user.first_name +" "+ data[i].user.last_name + " </td>"+
+                                "<td class='py-0'>"+
+                                    "<div class='md-form my-0'>"+
+                                        "<input name='student' value='" +data[i].user.username+ "' hidden class='form-control'>"+
+                                        "<input name='marks_" + data[i].user.username + "' required type='number' class='form-control max_marks' min='0'>"+
+                                    "</div></td></tr>"
+                        $("tbody").append(html);
+                    }
+
+                }
+           });
+        });
+
+
+    });
+
  </script>
 {% endblock %}
 
@@ -31,7 +53,7 @@
 
 <h3 class="my-3">Add Marks</h3>
 
-<div class="row">
+<div class="row" hidden>
     <div class="col-12">
 
         <form action="#" method="POST" enctype="multipart/form-data" style="display:inline-flex;">
@@ -50,7 +72,7 @@
 </div>
 
 
-    <h4 class="text-center">OR</h4>
+    <h4 class="text-center" hidden>OR</h4>
 
 <!-- Card -->
 <div class="card mb-3">
@@ -60,11 +82,10 @@
         <form action="{% url 'result_add' %}" method="POST">
             {% csrf_token %}
 
+            <input type="text" hidden name="course_id" id="course_id">
             <div class="mb-2">
                 <label for="sections_list">Select Section</label>
-
-
-                <select class="custom-select d-inline-block w-25" id="sections_list" onchange="getSelectValue(); ">
+                <select class="custom-select d-inline-block w-25" id="sections_list" required>
                     {% for section in sections%}
                         <option value="{{section.section_name}}">{{section.section_name}}</option>
                     {% endfor %}
@@ -72,30 +93,35 @@
 
             </div>
 
-            <div>
+            <div class="mb-2">
                 <label for="clos_list">Select CLO</label>
-                <select class="custom-select d-inline-block w-25" id="clos_list">
+                <select class="custom-select d-inline-block w-25" name="clos_list" id="clos_list" required>
                     {% for clo in clos %}
                         <option value="{{clo.id}}">{{clo.clo_code}}</option>
                     {% endfor %}
                 </select>
             </div>
 
+            <div>
+                <label for="assessment_tool">Select Assessment Tool</label>
+                <select class="custom-select d-inline-block w-25" name="assessment_tool" id="assessment_tool" required>
+                    {% for assessment_tool in assessment_tools %}
+                        <option value="{{assessment_tool.id}}">{{assessment_tool.title}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
 
             <div class="md-form">
-                <input type="text" name="assessment_tool" id="assessment_tool" class="form-control">
-                <label for="assessment_tool">Assessment Tool</label>
-            </div>
-            <div class="md-form">
-                <input type="text" name="assessment_no" id="assessment_no" class="form-control">
+                <input type="number" name="assessment_no" id="assessment_no" class="form-control" required min="1">
                 <label for="assessment_no">Assessment No</label>
             </div>
             <div class="md-form">
-                <input type="text" name="question_no" id="question_no" class="form-control">
+                <input type="number" name="question_no" id="question_no" class="form-control" required min="1">
                 <label for="question_no">Question No</label>
             </div>
             <div class="md-form">
-                <input type="text" name="total_marks" id="total_marks" class="form-control">
+                <input type="number" name="total_marks" id="total_marks" class="form-control" required min="1">
                 <label for="total_marks">Total Marks</label>
             </div>
             <div class="table-responsive text-nowrap">
@@ -108,30 +134,17 @@
                         </tr>
                     </thead>
                     <tbody>
-                    {% for student in students %}
-                        <tr>
-                            <th scope="row">{{student}}</th>
-                            <td>{{student}}</td>
-<!--                            <td class="py-0">-->
-<!--                                <div class="md-form my-0">-->
-<!--                                    <input name="student" value="{{value.roll_no}}" hidden class="form-control">-->
-<!--                                    <input name="marks_{{value.roll_no}}" type="text" class="form-control">-->
-<!--                                </div>-->
-<!--                            </td>-->
-                        </tr>
-                    {% endfor %}
+
                     </tbody>
                 </table>
             </div>
 
             <div class="float-right">
-                <input type="submit" value="Add Marks" class="btn btn-primary btn-md">
+                <input type="submit" value="Add Marks" id="submit_btn" class="btn btn-primary btn-md">
             </div>
         </form>
 
     </div>
 
 </div>
-<!-- Card -->
-
 {% endblock %}

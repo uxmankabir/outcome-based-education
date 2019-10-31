@@ -30,23 +30,21 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for plo in slos %}
+                    {% for slo in slos %}
 
-                        {% for item in plo %}
                         <tr>
                             <td scope="row">
-                                {{ item.slo_code }}
+                                {{ slo.slo_code }}
                             </td>
-                            <td>{{ item.description }}</td>
-                            <td>{{ item.plo.plo_code }}</td>
-                            <td>{{ item.plo.batch }}</td>
+                            <td>{{ slo.description }}</td>
+                            <td>{{ slo.plo.plo_code }}</td>
+                            <td>{{ slo.plo.batch }}</td>
                             <td class="py-2">
                                 <a href="#" class="btn btn-sm btn-primary"><i class="far fa-edit"></i></a>
-                                <a href="#" class="btn btn-sm btn-danger"><i class="far fa-trash-alt"></i></a>
+                                <a href="{%url 'slo_delete' slo.id%}" class="btn btn-sm btn-danger"><i class="far fa-trash-alt"></i></a>
                             </td>
 
                         </tr>
-                        {% endfor %}
                     {% endfor %}
             </table>
 
