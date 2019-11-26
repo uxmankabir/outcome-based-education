@@ -3,6 +3,8 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+
+from faculty.fusioncharts import FusionCharts
 from .serializers import StudentSerializer, SloSerializer, PloSerializer
 import datetime
 
@@ -318,3 +320,77 @@ def validate_plo_code(request):
         status=200
     )
 
+
+def show_report(request):
+    # Create an object for the Multiseries column 2D charts using the FusionCharts class constructor
+    mscol2D = FusionCharts("mscolumn2d", "ex1", "600", "400", "chart-1", "json",
+                           # The data is passed as a string in the `dataSource` as parameter.
+                           """{
+                                   "chart": {
+                                   "caption": "App Publishing Trend",
+                                   "subCaption": "2012-2016",
+                                   "xAxisName": "Years",
+                                   "yAxisName" : "Total number of apps in store",
+                                   "formatnumberscale": "1",
+                                   "drawCrossLine":"1",
+                                   "plotToolText" : "<b>$dataValue</b> apps on $seriesName in $label",
+                                   "theme": "fusion"
+                               },
+                    
+                               "categories": [{
+                                   "category": [{
+                                   "label": "2012"
+                                   }, {
+                                   "label": "2013"
+                                   }, {
+                                   "label": "2014"
+                                   }, {
+                                   "label": "2015"
+                                   },{
+                                   "label": "2016"
+                                   }
+                                   ]
+                               }],
+                               "dataset": [{
+                                   "seriesname": "iOS App Store",
+                                   "data": [{
+                                   "value": "125000"
+                                   }, {
+                                   "value": "300000"
+                                   }, {
+                                   "value": "480000"
+                                   }, {
+                                   "value": "800000"
+                                   }, {
+                                   "value": "1100000"
+                                   }]
+                               }, {
+                                   "seriesname": "Google Play Store",
+                                   "data": [{
+                                   "value": "70000"
+                                   }, {
+                                   "value": "150000"
+                                   }, {
+                                   "value": "350000"
+                                   }, {
+                                   "value": "600000"
+                                   },{
+                                   "value": "1400000"
+                                   }]
+                               }, {
+                                   "seriesname": "Amazon AppStore",
+                                   "data": [{
+                                   "value": "10000"
+                                   }, {
+                                   "value": "100000"
+                                   }, {
+                                   "value": "300000"
+                                   }, {
+                                   "value": "600000"
+                                   },{
+                                   "value": "900000"
+                                   }]
+                               }]
+                           }""")
+    return render(request, 'faculty/show_report.html',
+                  {'output': mscol2D.render(), 'chartTitle': 'Multiseries Column 2D Chart'})

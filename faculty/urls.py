@@ -36,4 +36,6 @@ urlpatterns = [
     path('outline_detail/<int:pk>', views.outline_detail, name='outline_detail'),
     path('outline_add', views.outline_add, name='outline_add'),
     path('outline_add/<int:pk>', views.outline_add, name='outline_add'),
+
+    path('report', views.show_report, name='report'),
 ]

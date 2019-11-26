@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    Report
+{% endblock %}
+
+{% block chartscript %}
+<script type="text/javascript" src="{% static 'fusioncharts-js/fusioncharts.js' %}"></script>
+<script type="text/javascript" src="{% static 'fusioncharts-js/themes/fusioncharts.theme.fusion.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+
+<h3 class="pt-5">{{ chartTitle|safe }}</h3>
+
+<div id="chart-1">{{ output|safe }}</div>
+
+{% endblock %}
