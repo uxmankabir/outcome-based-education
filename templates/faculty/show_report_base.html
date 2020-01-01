@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+<!--This is comment-->
+
+{% block script %}
+<script>
+    $(document).ready(function () {
+        $('#courses_list a').first().addClass("active");
+
+        $('#courses_list > a').click(function (e) {
+            e.preventDefault();
+            $('#courses_list > a').removeClass('active');
+            $(this).addClass('active');
+        });
+        $('#navbarNav ul > li').removeClass('active');
+        $('#result').addClass('active');
+    });
+
+</script>
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-xs-12 col-md-3 col-lg-2">
+
+        <h3 class="my-3">Courses</h3>
+
+        <div class="list-group list-group-flush" id="courses_list">
+            {% for course in courses %}
+            <a href="#" class="list-group-item list-group-item-action">{{course.name}}</a>
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+
+    <div class="col-xs-12 col-md-9 col-lg-10">
+<h3 class="my-3">Report</h3>
+        <div class="card mb-3">
+
+            <!-- Card content -->
+            <div class="card-body">
+
+                <div class="mt-2">
+                    <label for="section_list">Select Section</label>
+                    <select class="custom-select d-inline-block w-25" name="section_list" id="section_list" required>
+                        <option value="1">Section A</option>
+                        <option value="2">Section B</option>
+                        <option value="3">Section C</option>
+                        <option value="4">Section D</option>
+                    </select>
+                </div>
+                <div class="mt-2">
+                    <label for="type_list">Report Type</label>
+                    <select class="custom-select d-inline-block w-25" name="type_list" id="type_list" required>
+                        <option value="1">CLO based Class Level</option>
+                        <option value="2">CLO based detailed Class Level</option>
+                        <option value="3">Class Level CLO</option>
+                    </select>
+                </div>
+                <div class="mt-2">
+                    <label for="clo_list">Select CLO</label>
+                    <select class="custom-select d-inline-block w-25" name="clo_list" id="clo_list" required>
+                        <option value="1">CLO - 1</option>
+                        <option value="2">CLO - 2</option>
+                        <option value="3">CLO - 3</option>
+                    </select>
+                </div>
+                {% block reportdetail %}
+                {% endblock %}
+
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

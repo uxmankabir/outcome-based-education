@@ -392,5 +392,12 @@ def show_report(request):
                                    }]
                                }]
                            }""")
-    return render(request, 'faculty/show_report.html',
-                  {'output': mscol2D.render(), 'chartTitle': 'Multiseries Column 2D Chart'})
+    user = request.user
+    courses = Course.objects.filter(section__instructor_id=user.id).distinct()
+
+    context = {
+        'courses': courses,
+        'output': mscol2D.render(),
+    }
+
+    return render(request, 'faculty/show_report.html', context)

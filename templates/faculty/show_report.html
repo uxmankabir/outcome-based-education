@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "faculty/show_report_base.html" %}
 {% load static %}
 
 {% block title %}
@@ -10,7 +10,7 @@
 <script type="text/javascript" src="{% static 'fusioncharts-js/themes/fusioncharts.theme.fusion.js' %}"></script>
 {% endblock %}
 
-{% block content %}
+{% block reportdetail %}
 
 <h3 class="pt-5">{{ chartTitle|safe }}</h3>
 
